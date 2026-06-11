@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 import yaml
 import logging
 from src.logger import logging
-# from src.connections import s3_connection
+from src.connections import s3_connection 
 
 
 def load_params(params_path: str) -> dict:
@@ -75,9 +75,18 @@ def main():
         test_size = params['data_ingestion']['test_size']
         # test_size = 0.2
         
-        df = load_data(data_url='https://raw.githubusercontent.com/vikashishere/Datasets/refs/heads/main/data.csv')
-        # s3 = s3_connection.s3_operations("bucket-name", "accesskey", "secretkey")
-        # df = s3.fetch_file_from_s3("data.csv")
+        # Load AWS credentials from environment variables
+        try:
+            from dotenv import load_dotenv
+            load_dotenv()
+        except ImportError:
+            pass
+
+        aws_access_key = os.environ.get("AWS_ACCESS_KEY_ID")
+        aws_secret_key = os.environ.get("AWS_SECRET_ACCESS_KEY")
+
+        s3 = s3_connection.s3_operations("dushyantzz-bucket11", aws_access_key, aws_secret_key)
+        df = s3.fetch_file_from_s3("data.csv")
 
 
 
