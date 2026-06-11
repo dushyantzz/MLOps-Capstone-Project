@@ -1,3 +1,4 @@
+# pyrefly: ignore [missing-import]
 import pyodbc
 import pandas as pd
 import json
