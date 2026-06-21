@@ -20,17 +20,17 @@ Below is the complete architectural layout of the pipeline, from S3 data ingesti
 
 ```mermaid
 flowchart TD
-    subgraph Data Pipeline [Data & Preprocessing Pipeline (DVC)]
-        A[AWS S3 Bucket / SSMS] -->|Ingest| B(data_ingestion.py)
-        B -->|Raw Split| C[data/raw/train.csv & test.csv]
+    subgraph Data_Pipeline ["Data & Preprocessing Pipeline (DVC)"]
+        A["AWS S3 Bucket / SSMS"] -->|Ingest| B(data_ingestion.py)
+        B -->|Raw Split| C["data/raw/train.csv & test.csv"]
         C --> D(data_preprocessing.py)
-        D -->|Interim Cleaned| E[data/interim/train_processed.csv & test_processed.csv]
+        D -->|Interim Cleaned| E["data/interim/train_processed.csv & test_processed.csv"]
         E --> F(feature_engineering.py)
-        F -->|Processed BoW Features| G[data/processed/train_bow.csv & test_bow.csv]
+        F -->|Processed BoW Features| G["data/processed/train_bow.csv & test_bow.csv"]
         F -->|Save Vectorizer| H[models/vectorizer.pkl]
     end
 
-    subgraph Training Pipeline [Model Training & Tracking]
+    subgraph Training_Pipeline ["Model Training & Tracking"]
         G --> I(model_building.py)
         I -->|Trained Model| J[models/model.pkl]
         J --> K(model_evaluation.py)
@@ -42,23 +42,23 @@ flowchart TD
         O -->|Register & Transition to Staging| P[MLflow Model Registry on DagsHub]
     end
 
-    subgraph CI/CD [CI/CD & Containerization]
-        Q[GitHub Code Push] -->|Triggers| R[GitHub Actions CI/CD]
-        R -->|Build & Package| S[Docker Image]
+    subgraph CI_CD ["CI/CD & Containerization"]
+        Q[GitHub Code Push] -->|Triggers| R["GitHub Actions CI/CD"]
+        R -->|Build & Package| S["Docker Image"]
         S -->|Push| T[AWS ECR]
     end
 
-    subgraph Production Deployment [Production Cluster]
+    subgraph Production_Deployment ["Production Cluster"]
         U[AWS EKS Cluster] -->|Pull Image| T
-        U -->|Deploy Flask App Pods| V[Kubernetes Pods]
-        W[LoadBalancer Service] -->|Route Traffic| V
-        X[End Users] -->|HTTP Requests| W
+        U -->|Deploy Flask App Pods| V["Kubernetes Pods"]
+        W["LoadBalancer Service"] -->|Route Traffic| V
+        X["End Users"] -->|HTTP Requests| W
     end
 
-    subgraph Monitoring [Monitoring & Observability]
-        Y[Prometheus EC2 Instance] -->|Scrape Metrics| W
-        Z[Grafana EC2 Instance] -->|Visualize Metrics| Y
-        Z -->|Dashboards| AA[MLOps Engineers / Operators]
+    subgraph Monitoring_Observability ["Monitoring & Observability"]
+        Y["Prometheus EC2 Instance"] -->|Scrape Metrics| W
+        Z["Grafana EC2 Instance"] -->|Visualize Metrics| Y
+        Z -->|Dashboards| AA["MLOps Engineers / Operators"]
     end
 ```
 
